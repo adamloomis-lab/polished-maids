@@ -1,31 +1,14 @@
-<!doctype html>
-<html lang="en">
+# Polished Maids Cleaning Service
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Polished Maids Cleaning Service</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/assets/index-Deayv_P_.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DhqngJL_.css">
-  <script defer src="https://umami-production-8669.up.railway.app/script.js" data-website-id="c699130e-58e3-45e3-a6b1-1ad905757510"></script></head>
+## Business facts
+- Business: Polished Maids Cleaning Service
 
-  <body>
-    <!-- Netlify Forms detection (build bot scans static HTML, not the JS-rendered form) -->
-    <form hidden method='post' name='contact'><input type='hidden' name='form-name' value='contact' />
-      <input type="text" name="name" />
-      <input type="tel" name="phone" />
-      <input type="text" name="service" />
-      <textarea name="message"></textarea>
-    </form>
-    <div id="root"></div>
-    <!-- Simply Visible analytics --><script src="https://simplyvisible.online/track.js" defer></script>
-<script defer src="https://adamloomismarketing.com/credit.js"></script></body>
+## Key pages
+- https://polished-maids.netlify.app/
+- https://polished-maids.netlify.app/about
+- https://polished-maids.netlify.app/services
+- https://polished-maids.netlify.app/contact
+- https://polished-maids.netlify.app/privacy
+- https://polished-maids.netlify.app/terms
+- https://polished-maids.netlify.app/accessibility
 
-</html>
