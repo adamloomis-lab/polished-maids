@@ -64,12 +64,12 @@ export default function Footer() {
           <p className="text-white/40 text-xs">
             Website by{" "}
             <a
-              href="https://adamloomis.online"
+              href="https://adamloomismarketing.com"
               target="_blank"
               rel="noopener"
               className="text-white/60 hover:text-gold transition-colors"
             >
-              AdamLoomis.online
+              Adam Loomis Marketing
             </a>
           </p>
         </div>
