@@ -3,16 +3,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "wouter";
 import { Cookie } from "lucide-react";
 
-const STORAGE_KEY = "pm-cookie-consent";
+const STORAGE_KEY = "cookie-consent";
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Show only if the visitor hasn't dismissed it before.
+    // Show only if the visitor hasn't responded yet.
     try {
       if (!localStorage.getItem(STORAGE_KEY)) {
-        const t = setTimeout(() => setVisible(true), 1200);
+        const t = setTimeout(() => setVisible(true), 700);
         return () => clearTimeout(t);
       }
     } catch {
@@ -20,9 +20,9 @@ export default function CookieBanner() {
     }
   }, []);
 
-  const dismiss = () => {
+  const respond = (value: "accepted" | "declined") => {
     try {
-      localStorage.setItem(STORAGE_KEY, "dismissed");
+      localStorage.setItem(STORAGE_KEY, value);
     } catch {
       /* ignore */
     }
@@ -38,8 +38,8 @@ export default function CookieBanner() {
           exit={{ opacity: 0, y: 60 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="fixed bottom-24 left-4 right-4 md:left-6 md:right-auto md:bottom-6 md:max-w-md z-[70]"
-          role="dialog"
-          aria-label="Cookie notice"
+          role="region"
+          aria-label="Cookie consent"
         >
           <div className="bg-white shadow-[0_12px_40px_rgba(67,86,107,0.18)] border border-[#43566b]/10 rounded-2xl p-6 md:p-7">
             <div className="flex items-start gap-4">
@@ -64,17 +64,17 @@ export default function CookieBanner() {
                 </p>
                 <div className="flex items-center gap-5">
                   <button
-                    onClick={dismiss}
+                    onClick={() => respond("accepted")}
                     className="px-6 py-2.5 bg-gold text-white font-sans font-medium text-xs tracking-[0.08em] uppercase hover:bg-gold/90 transition-all duration-300 rounded-sm"
                   >
                     Sounds Good
                   </button>
                   <button
-                    onClick={dismiss}
+                    onClick={() => respond("declined")}
                     className="text-xs font-sans tracking-wide hover:text-gold transition-colors"
                     style={{ color: "#5a7089" }}
                   >
-                    Sweep it away
+                    No Thanks
                   </button>
                 </div>
               </div>
