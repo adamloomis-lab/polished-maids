@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://polished-maids.netlify.app/sitemap.xml
