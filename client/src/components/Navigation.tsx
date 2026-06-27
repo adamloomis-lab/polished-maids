@@ -43,6 +43,7 @@ export default function Navigation() {
   ];
 
   return (
+    <>
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
@@ -95,8 +96,9 @@ export default function Navigation() {
           <Menu size={26} />
         </button>
       </nav>
+    </header>
 
-      {/* Mobile Menu - full-screen slide-in */}
+    {/* Mobile Menu - full-screen slide-in (sibling of header so position:fixed escapes the header's backdrop-filter containing block) */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -225,6 +227,6 @@ export default function Navigation() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }
