@@ -209,15 +209,10 @@ export default function Navigation() {
               {/* Contact footer */}
               <div className="mt-auto px-6 py-7 space-y-4">
                 <div className="h-[1px] w-full bg-white/10" />
-                <a
-                  href="https://www.google.com/maps/search/?api=1&query=Northeast+Ohio"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-white/65 transition-colors hover:text-gold"
-                >
+                <div className="flex items-center gap-3 text-white/65">
                   <MapPin size={16} className="text-gold flex-shrink-0" strokeWidth={1.75} />
                   <span className="font-sans text-sm">Serving all of Northeast Ohio</span>
-                </a>
+                </div>
                 <div className="flex items-center gap-3 text-white/65">
                   <Clock size={16} className="text-gold flex-shrink-0" strokeWidth={1.75} />
                   <span className="font-sans text-sm">Mon - Sat: 8am - 6pm</span>
