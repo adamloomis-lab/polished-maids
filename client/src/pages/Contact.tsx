@@ -1,8 +1,8 @@
 /**
  * Polished Maids - Contact Page
- * Design: Clean form, #43566b titles, video integration
+ * Design: Clean fluid form, navy #43566b titles, gold accent, video integration
  * Scroll animations: varied (slideLeft, slideRight, fadeUp)
- * Form: Submits to Netlify Forms (email notification)
+ * Form: Submits to Netlify Forms (email notification) - backend preserved exactly
  */
 
 import { useState } from "react";
@@ -10,14 +10,31 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import AnimatedSection from "@/components/AnimatedSection";
 import { motion } from "framer-motion";
-import { Phone, MapPin, Clock } from "lucide-react";
-import { toast } from "sonner";
+import {
+  Phone, MapPin, Clock, Send, ArrowRight, Loader2,
+  Home as HomeIcon, SprayCan, KeyRound, Hammer, Building2,
+  Trash2, Boxes, MessageCircle, type LucideIcon,
+} from "lucide-react";
+import { FloatField, SuccessCheck } from "@/components/FluidField";
 import PageMeta from "@/components/PageMeta";
 
 const encode = (data: Record<string, string>) =>
   Object.keys(data)
     .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(data[k]))
     .join("&");
+
+// Service options as single-select icon cards. The submitted `value` is
+// kept identical to the old <select> so the Netlify backend gets the same data.
+const SERVICE_OPTIONS: { value: string; label: string; icon: LucideIcon }[] = [
+  { value: "General Cleaning", label: "General Cleaning", icon: HomeIcon },
+  { value: "Deep Cleaning", label: "Deep Cleaning", icon: SprayCan },
+  { value: "AIRBNB & Rentals", label: "Airbnb & Rentals", icon: KeyRound },
+  { value: "New Construction", label: "New Construction", icon: Hammer },
+  { value: "Commercial Cleaning", label: "Commercial", icon: Building2 },
+  { value: "Junk Removal", label: "Junk Removal", icon: Trash2 },
+  { value: "Organizing Solutions", label: "Organizing", icon: Boxes },
+  { value: "Other", label: "Something else", icon: MessageCircle },
+];
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -27,10 +44,13 @@ export default function Contact() {
     message: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedName, setSubmittedName] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    const firstName = formData.name.trim().split(" ")[0];
     try {
       const res = await fetch("/", {
         method: "POST",
@@ -38,13 +58,20 @@ export default function Contact() {
         body: encode({ "form-name": "contact", ...formData }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      toast.success(`Thank you, ${formData.name}! We'll be in touch within 24 hours.`);
+      setSubmittedName(firstName);
+      setSubmitted(true);
       setFormData({ name: "", phone: "", service: "", message: "" });
     } catch {
-      toast.error("Something went wrong. Please call us directly at (330) 242-7203.");
+      alert("Something went wrong. Please call us directly at (330) 242-7203.");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   return (
@@ -81,6 +108,49 @@ export default function Contact() {
             {/* Form */}
             <div className="lg:col-span-3">
               <AnimatedSection animation="slideLeft">
+                {/* Hidden static form so Netlify can register fields at build time */}
+                <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+                  <input type="text" name="name" />
+                  <input type="tel" name="phone" />
+                  <input type="text" name="service" />
+                  <textarea name="message" />
+                </form>
+
+                {submitted ? (
+                  <div
+                    className="rounded-xl border border-[#43566b]/10 bg-white p-10 md:p-12 text-center shadow-[0_24px_60px_-34px_rgba(67,86,107,0.5)]"
+                    style={{ animation: 'rise 0.8s cubic-bezier(0.16,1,0.3,1) both' }}
+                  >
+                    <span
+                      className="mx-auto mb-6 flex h-20 w-20 items-center justify-center"
+                      style={{ animation: 'pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both' }}
+                    >
+                      <SuccessCheck />
+                    </span>
+                    <h3 className="text-3xl md:text-4xl mb-3" style={{ color: '#43566b' }}>
+                      {submittedName ? `Thank You, ${submittedName}!` : 'Thank You!'}
+                    </h3>
+                    <p className="font-sans text-base font-light mb-8 max-w-md mx-auto" style={{ color: '#5a7089' }}>
+                      Your request is on its way to our team. We'll be in touch within 24 hours. Need us sooner? Give us a call and we'll take care of you today.
+                    </p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                      <a
+                        href="tel:+13302427203"
+                        className="group relative inline-flex items-center gap-2 overflow-hidden bg-gold text-white font-sans text-xs font-medium tracking-[0.14em] uppercase px-8 py-4 rounded-lg hover:bg-gold/90 transition-all duration-300"
+                      >
+                        <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-white/30 blur-md group-hover:[animation:sheen_0.9s_ease]" />
+                        <Phone size={16} /> (330) 242-7203
+                      </a>
+                      <button
+                        onClick={() => { setSubmitted(false); setSubmittedName(''); }}
+                        className="font-sans text-sm font-medium border-b pb-0.5 transition-colors"
+                        style={{ color: '#43566b', borderColor: 'rgba(67,86,107,0.4)' }}
+                      >
+                        Send another message
+                      </button>
+                    </div>
+                  </div>
+                ) : (
                 <form
                   name="contact"
                   method="POST"
@@ -95,87 +165,58 @@ export default function Contact() {
                       Don’t fill this out if you’re human: <input name="bot-field" />
                     </label>
                   </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="name" className="block text-xs font-sans font-medium tracking-[0.1em] uppercase mb-2" style={{ color: '#43566b' }}>
-                        Name
-                      </label>
-                      <input
-                        id="name"
-                        type="text"
-                        name="name"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-0 py-3 border-0 border-b bg-transparent focus-visible:outline-none focus:border-gold transition-colors duration-300"
-                        style={{ borderBottomColor: '#43566b20', color: '#43566b' }}
-                        placeholder="Your name"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="phone" className="block text-xs font-sans font-medium tracking-[0.1em] uppercase mb-2" style={{ color: '#43566b' }}>
-                        Phone
-                      </label>
-                      <input
-                        id="phone"
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-0 py-3 border-0 border-b bg-transparent focus-visible:outline-none focus:border-gold transition-colors duration-300"
-                        style={{ borderBottomColor: '#43566b20', color: '#43566b' }}
-                        placeholder="Your phone number"
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <FloatField name="name" label="Name" value={formData.name} onChange={handleChange} required />
+                    <FloatField name="phone" label="Phone" type="tel" value={formData.phone} onChange={handleChange} />
                   </div>
 
-                  <div>
-                    <label htmlFor="service" className="block text-xs font-sans font-medium tracking-[0.1em] uppercase mb-2" style={{ color: '#43566b' }}>
+                  {/* Service as single-select icon cards (value submits via formData.service) */}
+                  <fieldset>
+                    <legend className="mb-3 block font-sans text-xs font-medium tracking-[0.12em] uppercase" style={{ color: '#43566b' }}>
                       Service Needed
-                    </label>
-                    <select
-                      id="service"
-                      name="service"
-                      value={formData.service}
-                      onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                      className="w-full px-0 py-3 border-0 border-b bg-transparent focus-visible:outline-none focus:border-gold transition-colors duration-300 appearance-none"
-                      style={{ borderBottomColor: '#43566b20', color: '#43566b' }}
-                    >
-                      <option value="">Select a service...</option>
-                      <option value="General Cleaning">General Cleaning</option>
-                      <option value="Deep Cleaning">Deep Cleaning</option>
-                      <option value="AIRBNB & Rentals">AIRBNB & Rentals</option>
-                      <option value="New Construction">New Construction</option>
-                      <option value="Commercial Cleaning">Commercial Cleaning</option>
-                      <option value="Junk Removal">Junk Removal</option>
-                      <option value="Organizing Solutions">Organizing Solutions</option>
-                    </select>
-                  </div>
+                    </legend>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                      {SERVICE_OPTIONS.map((o) => {
+                        const active = formData.service === o.value;
+                        const Icon = o.icon;
+                        return (
+                          <button
+                            key={o.value}
+                            type="button"
+                            aria-pressed={active}
+                            onClick={() =>
+                              setFormData((prev) => ({ ...prev, service: active ? "" : o.value }))
+                            }
+                            className={`flex flex-col items-start gap-2 rounded-lg border px-3.5 py-3.5 text-left font-sans text-sm transition-all duration-200 active:scale-[0.98] ${
+                              active
+                                ? "border-gold bg-gold text-white shadow-[0_10px_24px_-12px_rgba(190,154,74,0.8)]"
+                                : "border-[#43566b]/15 bg-[#f7f8fa] text-[#43566b] hover:border-gold hover:bg-white"
+                            }`}
+                          >
+                            <Icon size={22} className={active ? "text-white" : "text-gold"} strokeWidth={1.75} />
+                            <span className="font-medium leading-tight">{o.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </fieldset>
 
-                  <div>
-                    <label htmlFor="message" className="block text-xs font-sans font-medium tracking-[0.1em] uppercase mb-2" style={{ color: '#43566b' }}>
-                      Message
-                    </label>
-                    <textarea
-                      id="message"
-                      rows={4}
-                      name="message"
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-0 py-3 border-0 border-b bg-transparent focus-visible:outline-none focus:border-gold transition-colors duration-300 resize-none"
-                      style={{ borderBottomColor: '#43566b20', color: '#43566b' }}
-                      placeholder="Tell us about your space and cleaning needs..."
-                    />
-                  </div>
+                  <FloatField name="message" label="Tell us about your space and cleaning needs" value={formData.message} onChange={handleChange} textarea rows={4} />
 
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="px-10 py-4 bg-gold text-white font-sans font-medium text-sm tracking-[0.08em] uppercase hover:bg-gold/90 transition-all duration-300 disabled:opacity-60"
+                    className="group relative flex w-full sm:w-auto items-center justify-center gap-2.5 overflow-hidden bg-gold text-white font-sans font-medium text-sm tracking-[0.08em] uppercase px-10 py-4 rounded-lg hover:bg-gold/90 transition-all duration-300 active:scale-[0.99] disabled:opacity-60"
                   >
-                    {submitting ? "Sending..." : "Request a Quote"}
+                    <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-white/30 blur-md group-hover:[animation:sheen_0.9s_ease]" />
+                    {submitting ? (
+                      <><Loader2 size={16} className="animate-spin" /> Sending</>
+                    ) : (
+                      <><Send size={14} /> Request a Quote <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" /></>
+                    )}
                   </button>
                 </form>
+                )}
               </AnimatedSection>
             </div>
 
